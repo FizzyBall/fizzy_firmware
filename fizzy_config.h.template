@@ -1,0 +1,40 @@
+/* These are general settings that take Hardware-Version and Network configuration into account */
+
+/* Define Network configuration
+-> outcomment for local network (@home) 
+*/
+
+#define WIFI_AP
+
+
+/* Motor driver
+-> outcomment for PWM signal only (Servo Motor)
+*/
+
+#define MOTOR_DRIVER
+
+
+/* Prototype version e.g for coordinat transformation */
+
+//#define FIZZY_PROTOTYPE_1
+#define FIZZY_PROTOTYPE_2
+
+/* WiFi credential */
+#ifdef WIFI_AP
+    #ifdef MOTOR_DRIVER
+        #define ESP_WIFI_SSID   "FiZZy_MC"
+    #else
+        #define ESP_WIFI_SSID   "FiZZy_PWM"
+    #endif
+    #define ESP_WIFI_PASS   "SpinnMeRoundAndRound"
+    #define ESP_WIFI_CHANNEL    1
+    #define MAX_STA_CONN    3
+#else //WIFI_AP
+    #define ESP_WIFI_SSID   "top"
+    #define ESP_WIFI_PASS   "secret"
+    #define ESP_WIFI_RETRY  5
+    static EventGroupHandle_t s_wifi_event_group;
+    static int s_retry_num = 0;
+    #define WIFI_CONNECTED_BIT BIT0
+    #define WIFI_FAIL_BIT      BIT1
+#endif //WIFI_AP
