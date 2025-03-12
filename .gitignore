@@ -1,0 +1,8 @@
+.config
+.vscode
+.devcontainer
+*.o
+*.pyc
+sdkconfig.old
+build/
+fizzy_config.h
