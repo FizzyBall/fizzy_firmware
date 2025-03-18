@@ -12,8 +12,8 @@
 #include "esp_timer.h"
 #include "esp_log.h"
 // ADC 
-#include "driver/adc.h"
-#include "esp_adc_cal.h"
+//#include "driver/adc.h"
+//#include "esp_adc_cal.h"
 //WIFI
 #include "esp_wifi.h"
 #include "esp_event.h"
@@ -30,9 +30,14 @@
 #define UDP_PORT    4711
 
 static const char *TAG = "wifi";
-static const char *git_info = GIT_BRANCH ":" GIT_COMMIT_HASH;
+static const char *git_info = GIT_STAT;
 
 //v--WIFI
+
+#ifndef WIFI_AP
+    static EventGroupHandle_t s_wifi_event_group;
+    static int s_retry_num = 0;
+#endif
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data) {
@@ -189,9 +194,11 @@ void app_main(void) {
     //MPU_spi_init();
     //MPU_imu_init();
     WIFI_init();
-    //OTA_init();
+    OTA_init();
 
     while(true) {
-
+        printf("Git: %s\n", git_info);
+        // Wait for one second
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
