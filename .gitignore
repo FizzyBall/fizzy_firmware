@@ -4,4 +4,3 @@
 *.o
 *.pyc
 build/
-fizzy_config.h
