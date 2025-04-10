@@ -6,9 +6,8 @@
 
 #define WIFI_AP
 
-
-/* WiFi credential */
-    #define ESP_WIFI_SSID       "FiZZy_"
+/* WiFi credentials */
+#ifdef WIFI_AP
     #define ESP_WIFI_PASS       "SpinnMeRoundAndRound"
     #define ESP_WIFI_CHANNEL    1
     #define MAX_STA_CONN        3

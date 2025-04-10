@@ -1,7 +1,9 @@
 
 #include <esp_wifi.h>
 #include <esp_event.h>
+#include <esp_mac.h>
 #include <nvs_flash.h>
+#include <string.h>
 
 // Hardware and Network specific options
 #include "wifi_config.h"
@@ -46,6 +48,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
 
 void WIFI_init(void) {
+    uint8_t mac_addr[6];
+    char ssid_name[19];
+    //get MAC address
+    esp_read_mac(mac_addr, ESP_MAC_BASE);
+    snprintf(ssid_name, sizeof(ssid_name), "FiZZy_%02X%02X%02X%02X%02X%02X",
+                            mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
 
@@ -72,8 +80,6 @@ void WIFI_init(void) {
 
     wifi_config_t wifi_config = {
         .ap = {
-            .ssid = ESP_WIFI_SSID,
-            .ssid_len = strlen(ESP_WIFI_SSID),
             .channel = ESP_WIFI_CHANNEL,
             .password = ESP_WIFI_PASS,
             .max_connection = MAX_STA_CONN,
@@ -83,6 +89,8 @@ void WIFI_init(void) {
     if (strlen(ESP_WIFI_PASS) == 0) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;
     }
+    // Set AP name
+    memcpy(wifi_config.ap.ssid, ssid_name, strlen(ssid_name));
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
@@ -96,7 +104,11 @@ void WIFI_init(void) {
     ESP_ERROR_CHECK(esp_netif_init());
 
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_sta();
+    
+    esp_netif_t *netif = esp_netif_create_default_wifi_sta();
+
+    // Set hostname
+    esp_netif_set_hostname(netif, ssid_name);
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
