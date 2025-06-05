@@ -20,3 +20,11 @@ class Fizzy:
         except:
             return -1
         return list(struct.unpack('q'+ 2*'f', data))
+    
+    def get_firmware_version(self):
+        self.sock.sendto(struct.pack('Bf', 0xff, 0), (self.ip, self.port))
+        try:
+            data = self.sock.recv(200)
+        except:
+            return -1
+        return data.decode('utf-8')

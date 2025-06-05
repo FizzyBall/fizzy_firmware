@@ -20,5 +20,3 @@ execute_process(
 )
 
 add_definitions("-DGIT_STAT=\"${GIT_BRANCH}:${GIT_COMMIT_HASH}\"")
-add_definitions("-DGIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
-add_definitions("-DGIT_BRANCH=\"${GIT_BRANCH}\"")

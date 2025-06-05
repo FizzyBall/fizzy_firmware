@@ -52,7 +52,7 @@ struct __attribute__((packed, aligned(1))) {
 // --- MAIN ---
 
 void app_main(void) {
-
+    int err;
     v_bat_init();
     motor_init();
     //MPU_spi_init();
@@ -77,7 +77,7 @@ void app_main(void) {
     dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(UDP_PORT);
-    int err = bind(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    err = bind(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err < 0) {
         ESP_LOGE(TAG, "Socket unable to bind: errno %d", errno);
     }
@@ -114,11 +114,17 @@ void app_main(void) {
                     udp_dataframe_out.motor_speed = motor_get_speed();
                     udp_dataframe_out.timestamp = esp_timer_get_time();
                     udp_dataframe_out.v_bat = v_bat_read();
-                    int err = sendto(sock, &udp_dataframe_out, sizeof(udp_dataframe_out), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                    err = sendto(sock, &udp_dataframe_out, sizeof(udp_dataframe_out), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
                     if (err < 0) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
-                        break;
                     }
+                    break;
+                case 0xff: // request firmware version
+                    err = sendto(sock, git_info, strlen(git_info), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                    if (err < 0) {
+                        ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
+                    }
+                    break;
                 default:
                     //tbd
                     break;
