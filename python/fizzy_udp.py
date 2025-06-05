@@ -19,4 +19,4 @@ class Fizzy:
             data = self.sock.recv(200)
         except:
             return -1
-        return list(struct.unpack('q'+'f', data))
+        return list(struct.unpack('q'+ 2*'f', data))

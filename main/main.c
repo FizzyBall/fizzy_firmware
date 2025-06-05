@@ -15,8 +15,7 @@
 #include "motor.h"
 
 // ADC 
-//#include "driver/adc.h"
-//#include "esp_adc_cal.h"
+#include "v_bat.h"
 
 //UDP
 #include "lwip/err.h"
@@ -46,6 +45,7 @@ struct {
 struct __attribute__((packed, aligned(1))) {
     int64_t timestamp;
     float   motor_speed;
+    float   v_bat;
 } udp_dataframe_out;
 
 
@@ -53,7 +53,7 @@ struct __attribute__((packed, aligned(1))) {
 
 void app_main(void) {
 
-    //ADC_init();
+    v_bat_init();
     motor_init();
     //MPU_spi_init();
     //MPU_imu_init();
@@ -113,6 +113,7 @@ void app_main(void) {
                     motor_set_speed(udp_dataframe_in.motor_speed);
                     udp_dataframe_out.motor_speed = motor_get_speed();
                     udp_dataframe_out.timestamp = esp_timer_get_time();
+                    udp_dataframe_out.v_bat = v_bat_read();
                     int err = sendto(sock, &udp_dataframe_out, sizeof(udp_dataframe_out), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
                     if (err < 0) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
