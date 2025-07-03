@@ -3,8 +3,11 @@
 #include <driver/spi_master.h>
 #include <driver/gpio.h>
 #include <esp_err.h>
+#include <esp_log.h>
 
 #include "LSM6DSO16IS.h"
+
+static const char *TAG = "MPU";
 
 static spi_device_handle_t spi_handle;
 
@@ -65,4 +68,9 @@ void MPU_init(void) {
 
     gpio_set_direction(MPU_CS_IO, GPIO_MODE_OUTPUT);
     gpio_set_level(MPU_CS_IO, 1);
+    // Hello World check
+    uint8_t who_am_i=0x0F;
+    uint8_t ret=0;
+    spi_read(who_am_i, &ret, 1);
+    ESP_LOGI(TAG, "MPU says %i", ret);
 }

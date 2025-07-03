@@ -4,29 +4,32 @@
 #include <string.h>
 
 // RTOS
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_system.h"
-#include "esp_timer.h"
-#include "esp_log.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/event_groups.h>
+#include <esp_system.h>
+#include <esp_timer.h>
+#include <esp_log.h>
 
 //Motor
-#include "motor.h"
+#include <motor.h>
 
 // ADC 
-#include "v_bat.h"
+#include <v_bat.h>
+
+//MPU
+#include <LSM6DSO16IS.h>
 
 //UDP
-#include "lwip/err.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
-#include "lwip/netdb.h"
+#include <lwip/err.h>
+#include <lwip/sockets.h>
+#include <lwip/sys.h>
+#include <lwip/netdb.h>
 #define UDP_PORT    4711
 
 //OAT update
-#include "wifi_setup.h"
-#include "http_ota.h"
+#include <wifi_setup.h>
+#include <http_ota.h>
 
 
 static const char *TAG = "fizzy";
@@ -55,8 +58,7 @@ void app_main(void) {
     int err;
     v_bat_init();
     motor_init();
-    //MPU_spi_init();
-    //MPU_imu_init();
+    MPU_init();
     WIFI_init();
     OTA_init();
 
