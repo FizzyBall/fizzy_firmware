@@ -70,6 +70,6 @@ void MPU_init(void) {
     gpio_set_level(MPU_CS_IO, 1);
     // Hello World check
     uint8_t ret=0;
-    spi_read(WHO_AM_I, &ret, 1);
+    spi_read(WHO_AM_I_IMU, &ret, 1);
     ESP_LOGI(TAG, "MPU says %i", ret);
 }
