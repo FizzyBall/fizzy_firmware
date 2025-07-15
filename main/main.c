@@ -88,8 +88,6 @@ void app_main(void) {
     struct sockaddr_storage source_addr; // Large enough for both IPv4 or IPv6
     socklen_t socklen = sizeof(source_addr);
 
-    
-
     while(true) {
         // Get data
         int len = recvfrom(sock, (char *) &udp_dataframe_in, sizeof(udp_dataframe_in), 0, (struct sockaddr *)&source_addr, &socklen);
@@ -119,6 +117,15 @@ void app_main(void) {
                     err = sendto(sock, &udp_dataframe_out, sizeof(udp_dataframe_out), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
                     if (err < 0) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
+                        break;
+                    }
+                    break;
+                case 66: //get raw IMU data
+                    uint8_t *imu_data = MPU_read_ACC_GYRO();
+                    err = sendto(sock, imu_data, 12, 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                    if (err < 0) {
+                        ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
+                        break;
                     }
                     break;
                 case 0xff: // request firmware version

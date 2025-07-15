@@ -12,6 +12,7 @@
 
 // public functions
 void MPU_init(void);
+uint8_t *MPU_read_ACC_GYRO();
 
 // LSM6DSO16IS register map
 #define FUNC_CFG_ACCESS             0x01    // R/W default = 0b00000000
