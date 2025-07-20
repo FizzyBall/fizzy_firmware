@@ -44,3 +44,13 @@ class Fizzy:
         except:
             return -1
         return data.decode('utf-8')
+
+    def get_imu_raw_q(self):
+        self.sock.sendto(struct.pack('Bf', 66, 0), (self.ip, self.port))
+        try:
+            data = self.sock.recv(200)
+        except:
+            return -1
+        print(data)
+        raw_data = struct.unpack('<'+4*'f'+'B', data)
+        return raw_data

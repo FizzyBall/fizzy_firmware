@@ -6,6 +6,7 @@
 #include <esp_log.h>
 
 #include "LSM6DSO16IS.h"
+#include "sensor_fusion_9x.h"
 
 // 16-bit 2's complement to dec
 #define TWO2DEC(val)    (0x8000 & (val) ? (int16_t)(0x7FFF & (val))-0x8000 : (int16_t)(val))
@@ -82,29 +83,41 @@ void MPU_init(void) {
     gpio_set_direction(MPU_CS_IO, GPIO_MODE_OUTPUT);
     gpio_set_level(MPU_CS_IO, 1);
     
-    //setup data-ready interrupt on INT1 (not needed for now)
-    spi_write_reg(INT1_CTRL, 0b00000000);
-    // power up ACC (6667Hz, +/-8g)
-    spi_write_reg(CTRL1_XL, 0b10101100);
-    // power up GYRO (6667Hz, +/-250dps)
-    spi_write_reg(CTRL2_G, 0b10100000);
+    // upload ISPU config
+    uint8_t dummy;
+    for(int i=0; i<MEMS_CONF_ARRAY_LEN(ispu_conf_conf_0); i++) {
+        switch(ispu_conf_conf_0[i].type) {
+            case MEMS_CONF_OP_TYPE_WRITE:
+                spi_write_reg(ispu_conf_conf_0[i].address, ispu_conf_conf_0[i].data);
+                break;
+            case MEMS_CONF_OP_TYPE_DELAY:
+                vTaskDelay(ispu_conf_conf_0[i].data/portTICK_PERIOD_MS);
+                break;
+            case MEMS_CONF_OP_TYPE_READ:
+                spi_read(ispu_conf_conf_0[i].address, &dummy, 1);
+                break;
+            case MEMS_CONF_OP_TYPE_POLL_SET:
+                do {
+                    spi_read(ispu_conf_conf_0[i].address, &dummy, 1);
+                } while(!(dummy&ispu_conf_conf_0[i].data));
+                break;
+            case MEMS_CONF_OP_TYPE_POLL_RESET:
+                do {
+                    spi_read(ispu_conf_conf_0[i].address, &dummy, 1);
+                } while(dummy&ispu_conf_conf_0[i].data);
+                break;
+        }
+    }
+    // switch to ISPU register mode
+    spi_write_reg(FUNC_CFG_ACCESS, 0x80);
 }
 
 
-static uint8_t raw_data[12];
-static uint8_t imu_status;
+static uint8_t raw_data[17];
 
 uint8_t *MPU_read_ACC_GYRO() {
     // read old data to trigger new measurement
-    spi_read(OUTX_L_G, raw_data, 12);
-    // wait a ms
-    //vTaskDelay(1 / portTICK_PERIOD_MS);
-    // wait until we have data ready (IMU and GYRO)
-    do {
-        spi_read(STATUS_REG_IMU, &imu_status, 1);
-    } while((imu_status & 0b11) < 0b11);
-    // read actual data
-    spi_read(OUTX_L_G, raw_data, 12);
+    spi_read(0x10, raw_data, 17);
     return raw_data;
 }
 

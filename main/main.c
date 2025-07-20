@@ -122,7 +122,7 @@ void app_main(void) {
                     break;
                 case 66: //get raw IMU data
                     uint8_t *imu_data = MPU_read_ACC_GYRO();
-                    err = sendto(sock, imu_data, 12, 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                    err = sendto(sock, imu_data, 17, 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
                     if (err < 0) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                         break;
