@@ -5,22 +5,28 @@
 #include <esp_err.h>
 #include <esp_log.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+
 #include "LSM6DSO16IS.h"
 #include "sensor_fusion_9x.h"
 
-// 16-bit 2's complement to dec
-#define TWO2DEC(val)    (0x8000 & (val) ? (int16_t)(0x7FFF & (val))-0x8000 : (int16_t)(val))
 
 static const char *TAG = "MPU";
 
-static spi_device_handle_t spi_handle;
 
 // local functions
 static void cs_active(spi_transaction_t *trans);
 static void cs_inactive(spi_transaction_t *trans);
 static void spi_write(uint8_t reg_addr, uint8_t *data, uint8_t len_data);
 static void spi_write_reg(uint8_t reg_addr, uint8_t data);
-static void spi_read(uint8_t reg_addr, uint8_t *data, uint8_t len_data);
+static void IRAM_ATTR imu_interrupt_handler(void *args);
+
+
+static spi_device_handle_t  spi_handle;
+extern SemaphoreHandle_t    sem_mpu_read = NULL;
+DMA_ATTR static uint8_t     spi_rec_buf[SPI_REC_BUF_SIZE];
+
 
 static void cs_active(spi_transaction_t *trans) {
     gpio_set_level(MPU_CS_IO, 0);
@@ -66,6 +72,7 @@ void MPU_init(void) {
         .sclk_io_num = MPU_SCLK_IO,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
+        .max_transfer_sz = SPI_REC_BUF_SIZE,
     };
     ESP_ERROR_CHECK(spi_bus_initialize(MPU_SPI_HOST, &buscfg, SPI_DMA_CH_AUTO));
 
@@ -108,16 +115,32 @@ void MPU_init(void) {
                 break;
         }
     }
+
     // switch to ISPU register mode
     spi_write_reg(FUNC_CFG_ACCESS, 0x80);
+
+    // Interrupt handling
+    sem_mpu_read = xSemaphoreCreateBinary();
+    gpio_set_direction(MPU_INT_IO, GPIO_MODE_INPUT);
+    gpio_pullup_dis(MPU_INT_IO);
+    gpio_pulldown_dis(MPU_INT_IO);
+    gpio_set_intr_type(MPU_INT_IO, GPIO_INTR_POSEDGE);
+    gpio_install_isr_service(0);
+    gpio_isr_handler_add(MPU_INT_IO, imu_interrupt_handler, (void *)MPU_INT_IO);
 }
 
+static void IRAM_ATTR imu_interrupt_handler(void *args) {
+    if((int)args == MPU_INT_IO) {
+        BaseType_t task_woken = pdFALSE;
+        xSemaphoreGiveFromISR(sem_mpu_read, &task_woken);
+        if(task_woken) {
+            portYIELD_FROM_ISR();
+        }
+    }
+}
 
-static uint8_t raw_data[17];
-
-uint8_t *MPU_read_ACC_GYRO() {
-    // read old data to trigger new measurement
-    spi_read(0x10, raw_data, 17);
-    return raw_data;
+uint8_t *MPU_read_RAW() {
+    spi_read(0x10, spi_rec_buf, SPI_REC_BUF_SIZE);
+    return spi_rec_buf;
 }
 

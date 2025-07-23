@@ -49,6 +49,7 @@ struct __attribute__((packed, aligned(1))) {
     int64_t timestamp;
     float   motor_speed;
     float   v_bat;
+    uint8_t imu_raw_data[SPI_REC_BUF_SIZE];
 } udp_dataframe_out;
 
 
@@ -65,7 +66,7 @@ void app_main(void) {
     // create socket
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0) {
-        ESP_LOGE(TAG, "Unable to create socket: erron %d", errno);
+        ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
     }
 
     // set timeout
@@ -121,8 +122,12 @@ void app_main(void) {
                     }
                     break;
                 case 66: //get raw IMU data
-                    uint8_t *imu_data = MPU_read_ACC_GYRO();
-                    err = sendto(sock, imu_data, 17, 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                    uint8_t *imu_data = MPU_read_RAW();
+                    memcpy(udp_dataframe_out.imu_raw_data, imu_data, SPI_REC_BUF_SIZE);
+                    udp_dataframe_out.motor_speed = motor_get_speed();
+                    udp_dataframe_out.timestamp = esp_timer_get_time();
+                    udp_dataframe_out.v_bat = v_bat_read();
+                    err = sendto(sock, &udp_dataframe_out, sizeof(udp_dataframe_out), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
                     if (err < 0) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                         break;

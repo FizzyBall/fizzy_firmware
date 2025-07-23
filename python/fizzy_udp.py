@@ -26,16 +26,13 @@ class Fizzy:
             return -1
         return list(struct.unpack('q'+ 2*'f', data))
     
-    def get_imu_raw(self):
+    def get_data(self):
         self.sock.sendto(struct.pack('Bf', 66, 0), (self.ip, self.port))
         try:
             data = self.sock.recv(200)
         except:
             return -1
-        raw_data = [self.two2dec(v) for v in struct.unpack('<'+6*'H', data)]
-        acc_scale = 2*8/0xFFFF
-        gyro_scale = 2*250/0xFFFF
-        return [raw_data[0]*gyro_scale, raw_data[1]*gyro_scale, raw_data[2]*gyro_scale, raw_data[3]*acc_scale, raw_data[4]*acc_scale, raw_data[5]*acc_scale]
+        return list(struct.unpack('<qffffffB', data))
     
     def get_firmware_version(self):
         self.sock.sendto(struct.pack('Bf', 0xff, 0), (self.ip, self.port))
@@ -44,13 +41,3 @@ class Fizzy:
         except:
             return -1
         return data.decode('utf-8')
-
-    def get_imu_raw_q(self):
-        self.sock.sendto(struct.pack('Bf', 66, 0), (self.ip, self.port))
-        try:
-            data = self.sock.recv(200)
-        except:
-            return -1
-        print(data)
-        raw_data = struct.unpack('<'+4*'f'+'B', data)
-        return raw_data
