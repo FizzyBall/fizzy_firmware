@@ -10,10 +10,8 @@ class Fizzy:
         self.sock.bind(("0.0.0.0", port))
         self.sock.settimeout(timeout)
 
-    def two2dec(self, val):
-        if (0x8000 & val):
-            val = (0x7FFF &val) - 0x8000
-        return val
+    def decode(self, data):
+        return list(struct.unpack('<qffffffB', data))
     
     def stop(self):
         self.sock.sendto(struct.pack('Bf', 0, 0), (self.ip, self.port))
@@ -24,15 +22,25 @@ class Fizzy:
             data = self.sock.recv(200)
         except:
             return -1
-        return list(struct.unpack('q'+ 2*'f', data))
+        return self.decode(data)
     
+    def start_downlink(self):
+        self.sock.sendto(struct.pack('Bf', 2, 0), (self.ip, self.port))
+
     def get_data(self):
         self.sock.sendto(struct.pack('Bf', 66, 0), (self.ip, self.port))
         try:
             data = self.sock.recv(200)
         except:
             return -1
-        return list(struct.unpack('<qffffffB', data))
+        return self.decode(data)
+    
+    def get_data_downlink(self):
+        try:
+            data = self.sock.recv(200)
+        except:
+            return -1
+        return self.decode(data)
     
     def get_firmware_version(self):
         self.sock.sendto(struct.pack('Bf', 0xff, 0), (self.ip, self.port))
