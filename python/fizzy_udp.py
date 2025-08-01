@@ -49,3 +49,9 @@ class Fizzy:
         except:
             return -1
         return data.decode('utf-8')
+
+    def flush_receive_buffer(self):
+        cnt = 0
+        while(isinstance(self.get_data_downlink(), list)):
+            cnt +=1
+        return cnt
