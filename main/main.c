@@ -59,13 +59,11 @@ typedef struct {
 } socket_info_t;
 
 static socket_info_t socket_info;
-static bool    DOWNLINK_ACTIVE = false;
+static volatile bool DOWNLINK_ACTIVE = false;
 
 // data downlink task
 static void MPU_downlink_task(void * param) {
     int err;
-    socket_info_t *socket_info_task;
-    socket_info_task = (socket_info_t *)param;
     DOWNLINK_ACTIVE = true;
     while(DOWNLINK_ACTIVE) {
         if(xSemaphoreTake(sem_mpu_read, portMAX_DELAY) == pdTRUE) {
@@ -74,12 +72,12 @@ static void MPU_downlink_task(void * param) {
             memcpy(udp_dataframe_out.imu_raw_data, imu_data, SPI_REC_BUF_SIZE);
             udp_dataframe_out.motor_speed = motor_get_speed();
             udp_dataframe_out.v_bat = 0;//v_bat_read();
-            err = sendto(socket_info_task->socket,
+            err = sendto(socket_info.socket,
                             &udp_dataframe_out,
                             sizeof(udp_dataframe_out),
                             0,
-                            (struct sockaddr *)&socket_info_task->source_addr,
-                            sizeof(socket_info_task->source_addr)
+                            (struct sockaddr *)&socket_info.source_addr,
+                            sizeof(socket_info.source_addr)
                         );
             if (err < 0) {
                 ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
@@ -183,7 +181,7 @@ void app_main(void) {
                         xTaskCreate(MPU_downlink_task,
                                     "MPU_downlink_task",
                                     1024,
-                                    &socket_info,
+                                    NULL,
                                     2,
                                     NULL
                                 );  
