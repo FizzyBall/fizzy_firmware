@@ -9,7 +9,7 @@
 #define MPU_INT_IO          25
 #define MPU_SPI_HOST        SPI3_HOST           // VSPI
 #define MPU_CLK             SPI_MASTER_FREQ_10M 
-#define SPI_REC_BUF_SIZE    17
+#define SPI_REC_BUF_SIZE    47
 
 // public functions
 void MPU_init(void);

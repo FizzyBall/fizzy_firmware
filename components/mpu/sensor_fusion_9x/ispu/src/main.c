@@ -84,7 +84,19 @@ void __attribute__ ((signal)) algo_00(void)
 	cast_float(ISPU_DOUT_02) = out.quaternion[1];
 	cast_float(ISPU_DOUT_04) = out.quaternion[2];
 	cast_float(ISPU_DOUT_06) = out.quaternion[3];
-	cast_uint8_t(ISPU_DOUT_08) = (uint8_t)mc_out.cal_quality;
+	cast_float(ISPU_DOUT_08) = out.linear_acceleration[0];
+	cast_float(ISPU_DOUT_10) = out.linear_acceleration[1];
+	cast_float(ISPU_DOUT_12) = out.linear_acceleration[2];
+	cast_sint16_t(ISPU_DOUT_14) = cast_sint16_t(ISPU_ARAW_X);
+	cast_sint16_t(ISPU_DOUT_15) = cast_sint16_t(ISPU_ARAW_Y);
+	cast_sint16_t(ISPU_DOUT_16) = cast_sint16_t(ISPU_ARAW_Z);
+	cast_sint16_t(ISPU_DOUT_17) = cast_sint16_t(ISPU_GRAW_X);
+	cast_sint16_t(ISPU_DOUT_18) = cast_sint16_t(ISPU_GRAW_Y);
+	cast_sint16_t(ISPU_DOUT_19) = cast_sint16_t(ISPU_GRAW_Z);
+	cast_sint16_t(ISPU_DOUT_20) = cast_sint16_t(ISPU_ERAW_0);
+	cast_sint16_t(ISPU_DOUT_21) = cast_sint16_t(ISPU_ERAW_1);
+	cast_sint16_t(ISPU_DOUT_22) = cast_sint16_t(ISPU_ERAW_2);
+	cast_uint8_t(ISPU_DOUT_23_L) = (uint8_t)mc_out.cal_quality;
 
 	int_status = int_status | 0x1u;
 }

@@ -4,6 +4,18 @@ output "Quat x" float
 output "Quat y" float
 output "Quat z" float
 output "Quat w" float
+output "linear ACC x" float
+output "linear ACC y" float
+output "linear ACC z" float
+output "ACC x raw" int16_t
+output "ACC y raw" int16_t
+output "ACC z raw" int16_t
+output "GYRO x raw" int16_t
+output "GYRO y raw" int16_t
+output "GYRO z raw" int16_t
+output "MAG x raw" int16_t
+output "MAG y raw" int16_t
+output "MAG z raw" int16_t
 output "Mag accuracy" uint8_t
 	0="uncalibrated"
 	1="poor"

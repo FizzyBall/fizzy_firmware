@@ -28376,7 +28376,7 @@ static const struct mems_conf_op_list ispu_conf_confs[ISPU_CONF_SENSORS_NUM] = {
 
 /* Outputs */
 
-static const struct mems_conf_result ispu_conf_results_0_4[] = {
+static const struct mems_conf_result ispu_conf_results_0_16[] = {
 	{ .code = 0x00, .label = "uncalibrated" },
 	{ .code = 0x01, .label = "poor" },
 	{ .code = 0x02, .label = "good" },
@@ -28425,14 +28425,134 @@ static const struct mems_conf_output ispu_conf_outputs_0[] = {
 		.results = NULL
 	},
 	{
+		.name = "linear ACC x",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_FLOAT,
+		.len = 1,
+		.reg_addr = 0x20,
+		.reg_name = "ISPU_DOUT_08_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "linear ACC y",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_FLOAT,
+		.len = 1,
+		.reg_addr = 0x24,
+		.reg_name = "ISPU_DOUT_10_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "linear ACC z",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_FLOAT,
+		.len = 1,
+		.reg_addr = 0x28,
+		.reg_name = "ISPU_DOUT_12_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "ACC x raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x2C,
+		.reg_name = "ISPU_DOUT_14_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "ACC y raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x2E,
+		.reg_name = "ISPU_DOUT_15_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "ACC z raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x30,
+		.reg_name = "ISPU_DOUT_16_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "GYRO x raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x32,
+		.reg_name = "ISPU_DOUT_17_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "GYRO y raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x34,
+		.reg_name = "ISPU_DOUT_18_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "GYRO z raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x36,
+		.reg_name = "ISPU_DOUT_19_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "MAG x raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x38,
+		.reg_name = "ISPU_DOUT_20_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "MAG y raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x3A,
+		.reg_name = "ISPU_DOUT_21_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
+		.name = "MAG z raw",
+		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
+		.type = MEMS_CONF_OUTPUT_TYPE_INT16_T,
+		.len = 1,
+		.reg_addr = 0x3C,
+		.reg_name = "ISPU_DOUT_22_L",
+		.num_results = 0,
+		.results = NULL
+	},
+	{
 		.name = "Mag accuracy",
 		.core = MEMS_CONF_OUTPUT_CORE_ISPU,
 		.type = MEMS_CONF_OUTPUT_TYPE_UINT8_T,
 		.len = 1,
-		.reg_addr = 0x20,
-		.reg_name = "ISPU_DOUT_08_L",
-		.num_results = (uint8_t)MEMS_CONF_ARRAY_LEN(ispu_conf_results_0_4),
-		.results = ispu_conf_results_0_4,
+		.reg_addr = 0x3E,
+		.reg_name = "ISPU_DOUT_23_L",
+		.num_results = (uint8_t)MEMS_CONF_ARRAY_LEN(ispu_conf_results_0_16),
+		.results = ispu_conf_results_0_16,
 	}
 };
 
