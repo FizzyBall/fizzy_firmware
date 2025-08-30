@@ -33,11 +33,23 @@ class Fizzy:
         Decode raw udp dataframe to list.
 
         :param data: UDP dataframe 
-        :type data: byte[33]
-        :return: [timestamp, motor-speed, v_bat, q1, q2, q3, q4, quality_mag]
-        :rtype: [int64_t, float, float, float, float, float, float, uint8_t]
+        :type data: byte[64]
+        :return: [timestamp, motor-speed, v_bat,
+                    q1, q2, q3, q4,
+                    lin. acc x, lin. acc y, lin.acc z,
+                    ACC_x_raw, ACC_y_raw, ACC_z_raw,
+                    GYRO_x_raw, GYRO_y_raw, GYRO_z_raw,
+                    MAG_x_raw, MAG_y_RAW, MAG_z_raw,
+                    quality_mag]
+        :rtype: [int64_t, float, float,
+                    float, float, float, float,
+                    float, float, float,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    uint8_t]
         """
-        return list(struct.unpack('<qffffffB', data))
+        return list(struct.unpack('<qfffffffffhhhhhhhhhB', data))
     
     def stop(self):
         """
@@ -53,8 +65,20 @@ class Fizzy:
 
         :param value: speed [-1.0 to 1.0]
         :type value: float
-        :return: [timestamp, motor-speed, v_bat, q1, q2, q3, q4, quality_mag]
-        :rtype: [int64_t, float, float, float, float, float, float, uint8_t]
+        :return: [timestamp, motor-speed, v_bat,
+                    q1, q2, q3, q4,
+                    lin. acc x, lin. acc y, lin.acc z,
+                    ACC_x_raw, ACC_y_raw, ACC_z_raw,
+                    GYRO_x_raw, GYRO_y_raw, GYRO_z_raw,
+                    MAG_x_raw, MAG_y_RAW, MAG_z_raw,
+                    quality_mag]
+        :rtype: [int64_t, float, float,
+                    float, float, float, float,
+                    float, float, float,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    uint8_t]
         """
         self.sock.sendto(struct.pack('Bf', 1, value), (self.ip, self.port))
         try:
@@ -78,8 +102,20 @@ class Fizzy:
         """
         Get data-frame from Fizzy in non-downlink mode.
 
-        :return: [timestamp, motor-speed, v_bat, q1, q2, q3, q4, quality_mag]
-        :rtype: [int64_t, float, float, float, float, float, float, uint8_t]
+        :return: [timestamp, motor-speed, v_bat,
+                    q1, q2, q3, q4,
+                    lin. acc x, lin. acc y, lin.acc z,
+                    ACC_x_raw, ACC_y_raw, ACC_z_raw,
+                    GYRO_x_raw, GYRO_y_raw, GYRO_z_raw,
+                    MAG_x_raw, MAG_y_RAW, MAG_z_raw,
+                    quality_mag]
+        :rtype: [int64_t, float, float,
+                    float, float, float, float,
+                    float, float, float,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    uint8_t]
         """
         self.sock.sendto(struct.pack('Bf', 66, 0), (self.ip, self.port))
         try:
@@ -94,8 +130,20 @@ class Fizzy:
 
         Note: v_bat will be 0 in downlink mode.
 
-        :return: [timestamp, motor-speed, v_bat, q1, q2, q3, q4, quality_mag]
-        :rtype: [int64_t, float, float, float, float, float, float, uint8_t]
+        :return: [timestamp, motor-speed, v_bat,
+                    q1, q2, q3, q4,
+                    lin. acc x, lin. acc y, lin.acc z,
+                    ACC_x_raw, ACC_y_raw, ACC_z_raw,
+                    GYRO_x_raw, GYRO_y_raw, GYRO_z_raw,
+                    MAG_x_raw, MAG_y_RAW, MAG_z_raw,
+                    quality_mag]
+        :rtype: [int64_t, float, float,
+                    float, float, float, float,
+                    float, float, float,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    int16_t, int16_t, int16_t,
+                    uint8_t]
         """
         try:
             data = self.sock.recv(200)
