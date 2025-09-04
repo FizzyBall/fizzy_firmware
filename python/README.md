@@ -1,0 +1,1 @@
+The python files should be compatibale with the latest firmware release (see release folder, first numbers represent the date). With the exeption of the folder that relates to a specific older release. 
