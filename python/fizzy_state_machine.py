@@ -240,13 +240,13 @@ Delta = 0.01366 # distance from axle center to block center of mass in x-directi
 R = .1    # radius of ball in m
 
 # virtual model control parameters:
-k_virtual = 40 # 30 # rigid version   # virtual spring constant, in percent per m, not the same as in simulation where it is in N/m
+k_virtual = 40      # virtual spring constant, in percent per m, not the same as in simulation where it is in N/m
 dist_error = 1      # m, just a carrot always 1 m ahead
 dir_ref = 0         # rad, reference direction (track or heading) in absolute coordinates. Note the hub re-initializes yaw each time to zero!
 # So this direction is not really absolute. Alternative setting could e.g. be dir_ref= -pi/2
 
 '''
-# to get out of singularities, the ball will do two things:
+# to get out of singularities, the ball can do two things:
 
 # 1. modify the reference direction, to get a sort of zigzag motion:
 amplitude_zigzag= np.pi/10     # amplitude in rad, zigzagging the reference yaw direction to get out of singularities
@@ -535,4 +535,5 @@ while True:
     
     if endtime-start < desired_minimal_cycle_time:
         # print('processing time', endtime-start)
+
         time.sleep(desired_minimal_cycle_time-(endtime-start))
